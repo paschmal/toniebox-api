@@ -22,6 +22,7 @@ import rocks.voss.toniebox.beans.Transformer;
 import rocks.voss.toniebox.beans.amazon.AmazonBean;
 import rocks.voss.toniebox.beans.toniebox.Chapter;
 import rocks.voss.toniebox.beans.toniebox.CreativeTonie;
+import rocks.voss.toniebox.beans.toniebox.ErrorInfo;
 import rocks.voss.toniebox.beans.toniebox.Household;
 import rocks.voss.toniebox.beans.toniebox.JWTToken;
 import rocks.voss.toniebox.beans.toniebox.Login;
@@ -46,6 +47,13 @@ public class RequestHandler {
 
     public void Login(Login loginBean) throws IOException {
         jwtToken = executePostRequest(Constants.SESSION, headerContentTypeJson, new StringEntity(Transformer.getJsonString(loginBean), "UTF-8"), null, JWTToken.class);
+
+        if(jwtToken.hasErrors()) {
+            System.err.println("Login to Toniecloud failed:");
+            for(ErrorInfo e : jwtToken.getErrors()) {
+                 System.err.println("\tKey: " + e.getKey() + " Code: " + e.getCode());
+            }
+        }
     }
 
     public Me getMe() throws IOException {
